@@ -25,7 +25,7 @@ export default {
       this.showModal = true
     },
 
-    save: function (e) {
+    save: function () {
     }
   }
 }

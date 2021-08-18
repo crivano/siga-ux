@@ -106,8 +106,16 @@ console.log(process.env.VUE_APP_API_URL)
 
 import MyInput from './components/MyInput.vue'
 import MySelect from './components/MySelect.vue'
+import MyPessoa from './components/MyPessoa.vue'
+import MyLotacao from './components/MyLotacao.vue'
+import MyClassificacao from './components/MyClassificacao.vue'
+import MyIFrame from './components/MyIFrame.vue'
 Vue.component('MyInput', MyInput);
 Vue.component('MySelect', MySelect);
+Vue.component('MyPessoa', MyPessoa);
+Vue.component('MyLotacao', MyLotacao);
+Vue.component('MyClassificacao', MyClassificacao);
+Vue.component('MyIframe', MyIFrame);
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
@@ -118,7 +126,6 @@ import {
   Bus
 } from './bl/bus.js'
 
-import vSelect from 'vue-select'
 
 import Autocomplete from 'v-autocomplete'
 
@@ -134,7 +141,12 @@ ptBR.messages.oab = field => 'OAB ' + field + ' inválido.'
 Vue.use(VueResource)
 Vue.use(VueClip)
 
+import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
+
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+Vue.component('treeselect', Treeselect)
 
 Vue.config.productionTip = false
 

@@ -68,9 +68,9 @@ export default {
     }
     var subString = s.substr(0, n - 1)
     return (
-      (useWordBoundary
-        ? subString.substr(0, subString.lastIndexOf(' '))
-        : subString) + '&hellip;'
+      (useWordBoundary ?
+        subString.substr(0, subString.lastIndexOf(' ')) :
+        subString) + '&hellip;'
     )
   },
   arrayMove: function (a, oldIndex, newIndex) {
@@ -94,12 +94,12 @@ export default {
       s +
       (j ? i.substr(0, j) + t : '') +
       i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
-      (c
-        ? d +
-          Math.abs(n - i)
-            .toFixed(c)
-            .slice(2)
-        : '')
+      (c ?
+        d +
+        Math.abs(n - i)
+        .toFixed(c)
+        .slice(2) :
+        '')
     )
   },
   logEvento: function (categoria, acao, rotulo, valor) {
@@ -107,7 +107,9 @@ export default {
       /* global ga */
       /* eslint no-undef: "error" */
       ga('send', 'event', categoria, acao, rotulo, valor)
-    } catch (ex) {}
+    } catch (ex) {
+      console.log(ex)
+    }
   },
   camelCaseToDash: function (s) {
     return s.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
@@ -117,9 +119,9 @@ export default {
   // informar o parâmetro propriedades na forma: ['propriedade','outraPropriedade','lista.propriedade']
   filtrarPorSubstring: function (a, s, propriedades) {
     var re = new RegExp(s, 'i')
-    return a.filter(function filterItem (item, idx, arr, context) {
+    return a.filter(function filterItem(item, idx, arr, context) {
       for (var key in item) {
-        if (!item.hasOwnProperty(key)) continue
+        if (!(key in item)) continue
         var prop = context
         prop = context === undefined ? key : context + '.' + key
         if (Array.isArray(item[key])) {
@@ -153,15 +155,16 @@ export default {
 
   applyDefauts: function (obj, defaults) {
     for (var k in defaults) {
-      if (!defaults.hasOwnProperty(k)) continue
-      if (obj.hasOwnProperty(k)) continue
+      if (!(k in defaults)) continue
+      if (k in obj) continue
       obj[k] = defaults[k]
     }
+    return obj
   },
 
   overrideProperties: function (obj, source) {
     for (var k in source) {
-      if (!source.hasOwnProperty(k)) continue
+      if (!(k in source)) continue
       obj[k] = source[k]
     }
   },
@@ -222,7 +225,7 @@ export default {
     return string
   },
 
-  formatBytes: function(bytes, decimals = 2) {
+  formatBytes: function (bytes, decimals = 2) {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
@@ -231,5 +234,67 @@ export default {
     const f = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
     const r = ("" + f).replace(".", ",");
     return r + " " + sizes[i];
+  },
+
+  slugify: function (str) {
+    str = str.replace(/^\s+|\s+$/g, ""); // trim
+    str = str.toLowerCase();
+
+    // remove accents, swap ñ for n, etc
+    var from = "åàáãäâèéëêìíïîòóöôùúüûñç·/_,:;";
+    var to = "aaaaaaeeeeiiiioooouuuunc------";
+
+    for (var i = 0, l = from.length; i < l; i++) {
+      str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
+    }
+
+    str = str
+      .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
+      .replace(/\s+/g, "-") // collapse whitespace and replace by -
+      .replace(/-+/g, "-") // collapse dashes
+      .replace(/^-+/, "") // trim - from start of text
+      .replace(/-+$/, ""); // trim - from end of text
+
+    return str;
+  },
+
+  onlyLettersAndNumbers(s) {
+    return s.replace(/[^a-z0-9]/gi, "")
+  },
+
+  buildHierarchy(input, id, label) {
+    var output = [];
+    var allNodes = [];
+    for (var i = 0; i < input.length; i++) {
+      var chain = input[i][label].split(": ");
+      var currentNode = output;
+      for (var j = 0; j < chain.length; j++) {
+        var wantedNode = chain[j];
+        var lastNode = currentNode;
+        for (var k = 0; k < currentNode.length; k++) {
+          if (currentNode[k].label == wantedNode) {
+            currentNode = currentNode[k].children;
+            break;
+          }
+        }
+        // If we couldn't find an item in this list of children
+        // that has the right name, create one:
+        if (lastNode == currentNode) {
+          var newNode = currentNode[k] = {
+            id: (j === chain.length - 1) ? input[i][id] : chain.slice(0, j+1).join(": "),
+            label: wantedNode,
+            children: []
+          };
+          allNodes.push(newNode);
+          currentNode = newNode.children;
+        }
+      }
+    }
+
+    for (i = 0; i < allNodes.length; i++)
+      if (allNodes[i].children.length == 0)
+        delete allNodes[i].children;
+
+    return output;
   }
 }

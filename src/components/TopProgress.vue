@@ -142,7 +142,7 @@ export default {
   },
 
   methods: {
-    beforeEnter (el) {
+    beforeEnter () {
       this.opacity = 0
       this.progress = 0
       this.width = 0
@@ -153,7 +153,7 @@ export default {
       done()
     },
 
-    afterEnter (el) {
+    afterEnter () {
       this._runStart()
     },
 

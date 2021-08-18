@@ -66,7 +66,7 @@ export default {
 
     refresh: function() {
       if (!this.showModal) return;
-      this.$http.get("status/" + this.key).then(
+      this.$http.get("sigaex/api/v1/status/" + this.key).then(
         response => {
           var r = response.data;
           this.progressbarCaption = r.mensagem;
@@ -79,7 +79,7 @@ export default {
           } else {
             setTimeout(() => {
               this.refresh();
-            }, 2000);
+            }, 500);
           }
         },
         error => {
