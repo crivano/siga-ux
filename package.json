@@ -5,7 +5,8 @@
   "author": "Renato Crivano <renato.crivano@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "rimraf ../webapp/precache* && vue-cli-service build --no-clean",
+    "build": "vue-cli-service build",
+    "buildOld": "rimraf ../webapp/precache* && vue-cli-service build --no-clean",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
